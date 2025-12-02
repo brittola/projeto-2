@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  users-service:
+    build: ./users-service
+    container_name: desafio5_users
+    networks:
+      - gateway_network
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+
+  orders-service:
+    build: ./orders-service
+    container_name: desafio5_orders
+    environment:
+      - USERS_SERVICE_URL=http://users-service:3001
+    networks:
+      - gateway_network
+    ports:
+      - "3002:3002"
+    depends_on:
+      - users-service
+    restart: unless-stopped
+
+  gateway:
+    build: ./gateway
+    container_name: desafio5_gateway
+    environment:
+      - USERS_SERVICE_URL=http://users-service:3001
+      - ORDERS_SERVICE_URL=http://orders-service:3002
+    networks:
+      - gateway_network
+    ports:
+      - "8000:8000"
+    depends_on:
+      - users-service
+      - orders-service
+    restart: unless-stopped
+
+networks:
+  gateway_network:
+    name: desafio5_gateway_network
+    driver: bridge

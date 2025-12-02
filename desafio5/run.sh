@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+echo "Iniciando servicos com Docker Compose..."
+docker-compose up -d --build
+
+echo "Aguardando servicos iniciarem..."
+sleep 10
+
+echo "Servicos em execução"
